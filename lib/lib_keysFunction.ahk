@@ -1,6 +1,5 @@
-﻿; keys functions start-------------
-; 所有按键对应功能都放在这，为防止从set.ini通过按键设置调用到非按键功能函数，
-; 规定函数以"keyFunc_"开头
+﻿; keys functions start-------------所有按键对应功能都放在这，为防止从set.ini通过
+; 按键设置调用到非按键功能函数，规定函数以"keyFunc_"开头
 
 keyFunc_doNothing(){
     return
@@ -22,8 +21,11 @@ keyFunc_run(p){
 }
 
 keyFunc_toggleCapsLock(){
-    SetCapsLockState, % GetKeyState("CapsLock","T") ? "Off" : "On"
-    return
+    If (GetKeyState("CapsLock", "T"))
+    {
+       keyFunc_esc()
+    }
+    SetCapsLockState, % GetKeyState("CapsLock","T") ? "Off" : "On" 
 }
 
 keyFunc_mouseSpeedIncrease(){
@@ -70,7 +72,6 @@ keyFunc_moveUp(i:=1){
     {
         ControlFocus, , ahk_id %LV_show_Hwnd%
         SendInput, {Up %i%}
-        Sleep, 5
         ControlFocus, , ahk_id %editHwnd%
     }
     else
@@ -85,7 +86,6 @@ keyFunc_moveDown(i:=1){
     {
         ControlFocus, , ahk_id %LV_show_Hwnd%
         SendInput, {Down %i%}
-        Sleep, 5
         ControlFocus, , ahk_id %editHwnd%
     }
     else
@@ -113,6 +113,15 @@ keyFunc_backspace(){
 
 
 keyFunc_delete(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        Return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput,^+{]}
+        Return
+    }
     SendInput,{delete}
     Return
 }
@@ -320,13 +329,9 @@ keyFunc_switchClipboard(){
 keyFunc_pasteSystem(){
     global
 
-    ; ;
-    ; 禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，导致偶尔会粘贴出空白
-    ;  if(!CLsets.global.allowClipboard)  ;禁用剪贴板功能
-    ;  {
-    ;      CapsLock2:=""
-    ;      return
-    ;  }
+        ; ;禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，导致
+    ; 偶尔会粘贴出空白if(!CLsets.global.allowClipboard)  ;禁用剪贴板功能{
+    ;  CapsLock2:="" return }
     if (whichClipboardNow!=0)
     {
         allowRunOnClipboardChange:=false
@@ -517,8 +522,8 @@ keyFunc_paste_2(){
 keyFunc_qbar(){
     global
     SetTimer, setCLqActive, 50
-    ;先关闭所有Caps热键，然后再打开
-    ;防止其他功能在 qbar 出来这段时间因为输入文字而被触发
+    ;先关闭所有Caps热键，然后再打开防止其他功能在 qbar 出来这段时间因为输入文字
+    ;而被触发
     CapsLock:=CapsLock2:=""
     CLq()
     CapsLock:=1
@@ -535,12 +540,22 @@ keyFunc_qbar(){
 
 
 keyFunc_tabPrve(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, ^{PgUp}
+        return
+    }
     SendInput, ^+{tab}
     return
 }
 
 
 keyFunc_tabNext(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, ^{PgDn}
+        return
+    }
     SendInput, ^{tab}
     return
 }
@@ -613,6 +628,11 @@ keyFunc_selectCurrentWord(){
 
 
 keyFunc_selectCurrentLine(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, ^{l}
+        return
+    }
     SendInput, {Home}
     SendInput, +{End}
     return
@@ -629,6 +649,353 @@ keyFunc_selectWordRight(i:=1){
     SendInput, +^{Right %i%}
     return
 }
+;peter nady script move line down or up in vscode in vscode
+keyFunc_moveLineUp(i:=1){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, !{Up %i%}
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, ^+{Up %i%}
+    }
+    return
+}
+keyFunc_moveLineDown(i:=1){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, !{Down %i%}
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, ^+{Down %i%}
+    }
+    return
+}
+
+;comment a line in vscode and open text editor on this direcory
+keyFunc_commentLine(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, ^{/}
+        return
+    }
+    IfWinActive, ahk_exe Arduino IDE.exe
+    {
+        SendInput, ^{/}
+        return
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, ^{/}
+        return
+    }
+    IfWinActive, ahk_exe Explorer.exe
+    {
+        path := GetActiveExplorerPath()
+        EnvGet, hdrive, Homedrive
+        EnvGet, hpath, Homepath
+        Run, "%hdrive%%hpath%\AppData\Local\Programs\Microsoft VS Code\code" "%path%"
+        return
+    }
+    return
+}
+
+;undo using ctrl+z
+keyFunc_undo(){
+    SendInput, ^{z}
+    Return
+}
+;selcting blocks in vscode
+keyFunc_rightSelctBlock(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, !+{Right}
+    }
+    return
+}
+keyFunc_leftSelctBlock(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, !+{Left}
+    }
+    return
+}
+;
+
+;equal sign on capslock+b
+keyFunc_equalSign(){
+    Send, {=}
+    return
+}
+;sepcial characters
+keyFunc_exclamationMark(){
+    Send, {!}
+    return
+}
+keyFunc_atSign(){
+    Send, {@}
+    return
+}
+keyFunc_hashSign(){
+    Send, {#}
+    return
+}
+keyFunc_dollarSign(){
+    Send, {$}
+    return
+}
+keyFunc_percentage(){
+    Send, {`%}
+    return
+}
+keyFunc_caretSymbole(){
+    Send, {^}
+    return
+}
+keyFunc_andSign(){
+    Send, {&}
+    return
+}
+keyFunc_asterisk(){
+    Send, {*}
+    return
+}
+keyFunc_leftBracket(){
+    Send, {(}
+    return
+}
+keyFunc_rightBracket(){
+    Send, {)}
+    return
+}
+keyFunc_underscoreSign(){
+    Send, {_}
+    return
+}
+keyFunc_plusSign(){
+    Send, {+}
+    return
+}
+keyFunc_curlyLeftBracket(){
+    Send, {{}}
+    return
+}
+
+keyFunc_curlyRightBracket(){
+    Send, {}}
+    return
+}
+keyFunc_verticalBar(){
+    Send, {|}
+    return
+}
+keyFunc_lessThan(){
+    Send, {<}
+    return
+}
+keyFunc_greaterThan(){
+    Send, {>}
+    return
+}
+
+;pervious and next page in chrome
+keyFunc_nextPage(){
+    IfWinActive, ahk_exe chrome.exe
+    {
+        SendInput, !{Right}
+        return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput, !{Right}
+        return
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, ^{]}
+        return
+    }
+    IfWinActive, ahk_exe explorer.exe
+    {
+        SendInput, !{Right}
+        return
+    }
+    Return
+}
+keyFunc_previousPage(){
+    IfWinActive, ahk_exe chrome.exe
+    {
+        SendInput, !{Left}
+        return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput, !{Left}
+        return
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, ^{[}
+        return
+    }
+    IfWinActive, ahk_exe explorer.exe
+    {
+        SendInput, !{Left}
+        return
+    }
+    return
+}
+
+;send tab when press capslock + ralt
+keyFunc_tabKey(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, {Tab}
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, {Tab}
+    }
+    return
+}
+;send shift + tab when press capslock + lalt + ralt
+keyFun_shiftTab(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput, +{Tab}
+    }
+    IfWinActive, ahk_exe Notion.exe
+    {
+        SendInput, +{Tab}
+    }
+    return
+}
+
+;Bracketeer
+keyFunc_removeBrackets(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;Shift+Cmd+Alt+I
+        SendInput, +^!{i}
+    }
+    return
+}
+; ctrl + d in vscode
+keyFun_addSelectionToNextFindMatch(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;Cmd+d
+        SendInput, ^{d}
+    }
+    return
+}
+keyFunc_removeQuotes(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;Shift+ctrl+Alt+'
+        SendInput, +^!{'}
+    }
+    return
+}
+
+;jumpy
+keyFun_jumpy(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;ctrl + alt + =
+        SendInput, ^!{=}
+    }
+    return
+}
+;vscode ctrl + shift + \ ,else shift + enter
+keyFun_lalt_space(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;ctrl + shift + \
+        SendInput, ^!{\}
+        Return
+    }
+    ;shift + enter
+    SendInput, +{Enter}
+    Return
+}
+; swap between desktops in window
+keyFun_leftDesktop(){
+    SendInput, ^#{Left}
+    Return
+}
+keyFun_rightDesktop(){
+    SendInput, ^#{Right}
+    Return
+}
+keyFun_r(){
+    keyFun_jumpy()
+    keyFunc_delete()
+}
+; create new desktop
+keyFun_newDesktop(){
+    SendInput, ^#{d}
+    Return
+}
+keyFun_deleteDesktop(){
+    SendInput, ^#{F4}
+    Return
+}
+; toggle AltTab menu 
+keyFun_altTabMenu(){
+    IfWinActive, ahk_class MultitaskingViewFrame
+    {
+        SendInput, {Enter}
+        Return
+    }
+    SendInput , ^!{tab}
+    Return
+}
+; just to toggle between two windows
+keyFun_altTab(){
+    SendInput , !{tab}
+    Return
+}
+; funtion to close the current focused window
+keyFun_closeWindow(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput , ^{w}
+        Return
+    }
+    WinGet, active_id, ID, A
+    WinClose, ahk_id %active_id%
+    Return
+}
+;this function is used to get the path of the current direcory opened by file
+;explorer 
+GetActiveExplorerPath()
+{
+    explorerHwnd := WinActive("ahk_class CabinetWClass")
+    if (explorerHwnd)
+    {
+        for window in ComObjCreate("Shell.Application").Windows
+        {
+            if (window.hwnd==explorerHwnd)
+            {
+                return window.Document.Folder.Self.Path
+            }
+        }
+    }
+}
+;--------------------------------------------------------------------------
+keyFunc_lalt_l(){
+    keyFunc_rightSelctBlock()
+    keyFunc_nextPage()
+    Return
+}
+
+keyFunc_lalt_j(){
+    keyFunc_leftSelctBlock()
+    keyFunc_previousPage()()
+    Return
+}
 
 ;页面移动一行，光标不动
 keyFunc_pageMoveLineUp(i:=1){
@@ -641,7 +1008,6 @@ keyFunc_pageMoveLineDown(i:=1){
     SendInput, ^{Down %i%}
     return
 }
-
 
 
 keyFunc_getJSEvalString(){
@@ -745,16 +1111,10 @@ keyFunc_qbar_upperFolderPath(){
         return true
     }
     ControlGetText, editText, , ahk_id %editHwnd%
-    ;  if(historyIndex>1)
-    ;      historyIndex--
+    ;  if(historyIndex>1) historyIndex--
 
-    ;  _t:=qbarPathHistory[historyIndex+1]
-    ;  if(_t=editText)
-    ;  {
-    ;      editText:=qbarPathHistory[historyIndex]
-    ;  }
-    ;  else
-    ;      editText:=_t
+    ;  _t:=qbarPathHistory[historyIndex+1] if(_t=editText) {
+    ;  editText:=qbarPathHistory[historyIndex] } else editText:=_t
     qbarPathFuture.insert(editText)    ;记录路径历史
     editText := RegExReplace(editText,"i)([^\\]*\\|[^\\]*)$")
     ;  ifInsertHistory:=0  ;禁止记录地址
@@ -801,11 +1161,8 @@ keyFunc_winbind_binding(n){
 
 keyFunc_winPin(){
     _id:=WinExist("A")
-    ;  WinGet, ExStyle, ExStyle
-    ;  if (ExStyle & 0x8)
-    ;  {
-    ;      WinSet, AlwaysOnTop, Off
-    ;      WinSet, Transparent, Off
+    ;  WinGet, ExStyle, ExStyle if (ExStyle & 0x8) { WinSet, AlwaysOnTop, Off
+    ;  WinSet, Transparent, Off
     ;    
     ;      return
     ;  }
@@ -821,63 +1178,8 @@ keyFunc_goCjkPage(){
     return
 }
 
-; 鼠标左键点击
-keyfunc_click_left(){
-    Click, Left
-}
-
-; 鼠标右键点击
-keyfunc_click_right(){
-    Click, Right
-}
-
-; 移动鼠标
-keyfunc_mouse_up(){
-    MouseMove, 0, -dynamic_speed(), 0, R
-}
-
-keyfunc_mouse_down(){
-    MouseMove, 0, dynamic_speed(), 0, R
-}
-
-keyfunc_mouse_left(){
-    MouseMove, -dynamic_speed(), 0, 0, R
-}
-
-keyfunc_mouse_right(){
-    MouseMove, dynamic_speed(), 0, 0, R
-}
-
-; 上滑滚轮
-keyfunc_wheel_up(){
-    Send, {WheelUp 3}
-}
-
-; 下滑滚轮
-keyfunc_wheel_down(){
-    Send, {Wheeldown 3}
-}
-
  
-;keys functions end-------------
-
-
-; 判断是否为连续点击，连续点击时指数增加移动速度
-; init 初始单次移动距离
-; a 加速度
-; max 最大单次移动距离
-dynamic_speed(init:=10, a:=0.2, max:=80) 
-{
-    static N := 0
-    if (A_ThisHotkey = A_PriorHotkey) and (A_TimeSincePriorHotkey < 300)
-        N += a
-    else
-        N = 0
-    return Min(Floor(init+Exp(N)), max)
-}
-
-
-; testing area ---
+;keys functions end------------- testing arer ---
 
 keyFunc_activateSideWin(UDLR){
     activateSideWin(UDLR)

@@ -1,6 +1,8 @@
+#NoEnv
 #SingleInstance force
-
-; If the script is not elevated, relaunch as administrator and kill current instance:
+#InstallKeybdHook
+; If the script is not elevated, relaunch as administrator and kill current
+; instance:
 full_command_line := DllCall("GetCommandLine", "str")
 if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
 {
@@ -40,14 +42,12 @@ allowRunOnClipboardChange:=true
 #include ..\language\lang_func.ahk
 #include ..\language\Simplified_Chinese.ahk
 #include ..\language\English.ahk
-;  #include ..\language\Traditional_Chinese.ahk
-; /language
+;  #include ..\language\Traditional_Chinese.ahk /language
 
 #include lib_keysFunction.ahk
 #include lib_keysSet.ahk
-;  #include lib_ahkExec.ahk
-;  #include lib_scriptDemo.ahk
-;  #include lib_fileMethods.ahk
+;  #include lib_ahkExec.ahk #include lib_scriptDemo.ahk #include
+;  lib_fileMethods.ahk
 
 #include lib_settings.ahk ;get the settings from capslock+settings.ini 
 #Include lib_clQ.ahk ;capslock+Q
@@ -60,8 +60,6 @@ allowRunOnClipboardChange:=true
 #Include lib_mouseSpeed.ahk
 #Include lib_mathBoard.ahk
 #include lib_loadAnimation.ahk
-
-
 ;change dir
 #include ..\userAHK
 #include *i main.ahk
@@ -78,9 +76,8 @@ start:
 global ctrlZ, CapsLock2, CapsLock
 
 Capslock::
-;ctrlZ:     Capslock+Z undo / redo flag
-;Capslock:  Capslock 键状态标记，按下是1，松开是0
-;Capslock2: 是否使用过 Capslock+ 功能标记，使用过会清除这个变量
+;ctrlZ:     Capslock+Z undo / redo flag Capslock:  Capslock 键状态标记，按下是
+;1，松开是0 Capslock2: 是否使用过 Capslock+ 功能标记，使用过会清除这个变量
 ctrlZ:=CapsLock2:=CapsLock:=1
 
 SetTimer, setCapsLock2, -300 ; 300ms 犹豫操作时间
@@ -109,15 +106,8 @@ if(winTapedX!=-1)
 {
     winsSort(winTapedX)
 }
-return
 
-<!Capslock::
-#Capslock::
-; 按下lalt+Capslock或win+Capslock时，同样启动 Capslock+ 功能
-CapsLock:=1
-KeyWait, Capslock
-CapsLock:=""
-return
+Return
 
 setCapsLock2:
 CapsLock2:=""
@@ -148,7 +138,8 @@ try
 return
 #if
 
-#If CapsLock ;when capslock key press and hold
+#If  GetKeyState("CapsLock", "T") or CapsLock
+; #If CapsLock ;when capslock key press and hold
 
 LAlt::return
 
@@ -164,8 +155,8 @@ try
 Capslock2:=""
 return
 
-;--::-------------------------
-;  KEY_TO_NAME := {"a":"a","b":"b","c":"c","d":"d","e":"e","f":"f","g":"g","h":"h","i":"i"
+;--::------------------------- KEY_TO_NAME :=
+;  {"a":"a","b":"b","c":"c","d":"d","e":"e","f":"f","g":"g","h":"h","i":"i"
 ;    ,"j":"j","k":"k","l":"l","m":"m","n":"n","o":"o","p":"p","q":"q","r":"r"
 ;    ,"s":"s","t":"t","u":"u","v":"v","w":"w","x":"x","y":"y","z":"z"
 ;    ,"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9","0":"0"
@@ -177,9 +168,7 @@ return
 ;    ,"\":"backSlash",";":"semicolon","'":"quote",",":"comma",".":"dot","/":"slash","ralt":"ralt"
 ;    ,"wheelUp":"wheelUp","wheelDown":"wheelDown"}
 
-;  for k,v in KEY_TO_NAME{
-;      msgbox, % v
-;  }
+;  for k,v in KEY_TO_NAME{ msgbox, % v }
 a::
 b::
 c::
@@ -308,11 +297,7 @@ try
 Capslock2:=""
 Return
 
-;  RAlt::
-;  try
-;      runFunc(keyset.caps_ralt)
-;  Capslock2:=""
-;  return
+;  RAlt:: try runFunc(keyset.caps_ralt) Capslock2:="" return
 
 
 
@@ -760,60 +745,27 @@ try
     runFunc(keyset.caps_win_0)
 Capslock2:=""
 return
-;  #s::
-;      keyFunc_activateSideWin("l")
-;  Capslock2:=""
-;  return
+;  #s:: keyFunc_activateSideWin("l") Capslock2:="" return
 
-;  #f::
-;      keyFunc_activateSideWin("r")
-;      Capslock2:=""
-;  return
+;  #f:: keyFunc_activateSideWin("r") Capslock2:="" return
 
-;  #e::
-;      keyFunc_activateSideWin("u")
-;  Capslock2:=""
-;  return
+;  #e:: keyFunc_activateSideWin("u") Capslock2:="" return
 
-;  #d::
-;      keyFunc_activateSideWin("d")
-;      Capslock2:=""
-;  return
+;  #d:: keyFunc_activateSideWin("d") Capslock2:="" return
 
-;  #w::
-;      keyFunc_putWinToBottom()
-;      Capslock2:=""
-;  return
+;  #w:: keyFunc_putWinToBottom() Capslock2:="" return
 
-;  #a::
-;      keyFunc_activateSideWin("fl")
-;      Capslock2:=""
-;  return
+;  #a:: keyFunc_activateSideWin("fl") Capslock2:="" return
 
-;  #g::
-;      keyFunc_activateSideWin("fr")
-;      Capslock2:=""
-;  return
+;  #g:: keyFunc_activateSideWin("fr") Capslock2:="" return
 
-;  #z::
-;      keyFunc_clearWinMinimizeStach()
-;      CapsLock2:=""
-;  return
+;  #z:: keyFunc_clearWinMinimizeStach() CapsLock2:="" return
 
-;  #x::
-;      keyFunc_inWinMinimizeStack(true)
-;      Capslock2:=""
-;  return
+;  #x:: keyFunc_inWinMinimizeStack(true) Capslock2:="" return
 
-;  #c::
-;      keyFunc_inWinMinimizeStack()
-;      Capslock2:=""
-;  return
+;  #c:: keyFunc_inWinMinimizeStack() Capslock2:="" return
 
-;  #v::
-;      keyFunc_outWinMinimizeStack()
-;      Capslock2:=""
-;  return
+;  #v:: keyFunc_outWinMinimizeStack() Capslock2:="" return
 
 
 
