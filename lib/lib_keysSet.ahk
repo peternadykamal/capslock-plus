@@ -15,7 +15,7 @@ if(CLSets.global.default_hotkey_scheme == "capslock_plus") {
 
 return
 
-; behaviour 
+
 keySchemeInit_capslox(){
     global
 
@@ -117,7 +117,7 @@ keySchemeInit_capslox(){
     if(!keyset.caps_quote)
         keyset.caps_quote:="keyFunc_selectCurrentLine"
     if(!keyset.caps_enter)
-        keyset.caps_enter:="keyFun_altTab"
+        keyset.caps_enter:="keyFun_altTabMenu"
         ;keyFunc_enterWherever
     if(!keyset.caps_comma)
         keyset.caps_comma:="keyFunc_lessThan"
@@ -251,11 +251,11 @@ keySchemeInit_capslox(){
     if(!keyset.caps_lalt_quote)
         keyset.caps_lalt_quote:="keyFunc_removeQuotes"
     if(!keyset.caps_lalt_enter)
-        keyset.caps_lalt_enter:="keyFun_altTabMenu"
+        keyset.caps_lalt_enter:="keyFunc_doNothing"
     if(!keyset.caps_lalt_comma)
         keyset.caps_lalt_comma:="keyFunc_selectCurrentWord"
     if(!keyset.caps_lalt_dot)
-        keyset.caps_lalt_dot:="keyFunc_selectToPageEnd"
+        keyset.caps_lalt_dot:="keyFunc_selectWordRight(3)"
     if(!keyset.caps_lalt_slash)
         keyset.caps_lalt_slash:="keyFunc_deleteToPageEnd"
     if(!keyset.caps_lalt_space)

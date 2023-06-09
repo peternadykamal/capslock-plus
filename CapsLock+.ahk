@@ -138,8 +138,8 @@ try
 return
 #if
 
-#If  GetKeyState("CapsLock", "T") or CapsLock
-; #If CapsLock ;when capslock key press and hold
+; #If  GetKeyState("CapsLock", "T") or CapsLock
+#If CapsLock ;when capslock key press and hold
 
 LAlt::return
 

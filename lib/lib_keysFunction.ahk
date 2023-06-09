@@ -329,7 +329,7 @@ keyFunc_switchClipboard(){
 keyFunc_pasteSystem(){
     global
 
-        ; ;禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，导致
+    ; ;禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，导致
     ; 偶尔会粘贴出空白if(!CLsets.global.allowClipboard)  ;禁用剪贴板功能{
     ;  CapsLock2:="" return }
     if (whichClipboardNow!=0)
@@ -680,11 +680,6 @@ keyFunc_commentLine(){
         SendInput, ^{/}
         return
     }
-    IfWinActive, ahk_exe Arduino IDE.exe
-    {
-        SendInput, ^{/}
-        return
-    }
     IfWinActive, ahk_exe Notion.exe
     {
         SendInput, ^{/}
@@ -913,7 +908,7 @@ keyFun_lalt_space(){
     IfWinActive, ahk_exe Code.exe
     {
         ;ctrl + shift + \
-        SendInput, ^!{\}
+        SendInput, ^+{\}
         Return
     }
     ;shift + enter
@@ -952,16 +947,10 @@ keyFun_altTabMenu(){
     SendInput , ^!{tab}
     Return
 }
-; just to toggle between two windows
-keyFun_altTab(){
-    SendInput , !{tab}
-    Return
-}
 ; funtion to close the current focused window
 keyFun_closeWindow(){
     IfWinActive, ahk_exe Code.exe
     {
-        SendInput , ^{w}
         Return
     }
     WinGet, active_id, ID, A
