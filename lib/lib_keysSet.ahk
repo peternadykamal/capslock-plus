@@ -26,7 +26,8 @@ keySchemeInit_capslox(){
     if(!keyset.caps_a)
         keyset.caps_a:="keyFunc_moveWordLeft"
     if(!keyset.caps_b)
-        keyset.caps_b:="keyFun_addSelectionToNextFindMatch"
+        keyset.caps_b:="jumpToNextOccuranceOfChar"
+        ;keyset.caps_b:="keyFun_addSelectionToNextFindMatch"
     if(!keyset.caps_c)
         keyset.caps_c:="keyFunc_copy_1"
     if(!keyset.caps_d)
@@ -45,10 +46,11 @@ keySchemeInit_capslox(){
         keyset.caps_j:="keyFunc_selectLeft"
     if(!keyset.caps_k)
         keyset.caps_k:="keyFunc_selectDown"
-    if(!keyset.caps_l)@
+    if(!keyset.caps_l)
         keyset.caps_l:="keyFunc_selectRight"
     if(!keyset.caps_m)
         keyset.caps_m:="keyFunc_selectEnd"
+        ; keyset.caps_m:="activateModificationMode"
     if(!keyset.caps_n)
         keyset.caps_n:="keyFunc_selectHome"
     if(!keyset.caps_o)
@@ -158,9 +160,11 @@ keySchemeInit_capslox(){
     ; LAlt--------------------------------------------
 
     if(!keyset.caps_lalt_a)
-        keyset.caps_lalt_a:="keyFunc_moveWordLeft(3)"
+        keyset.caps_lalt_a:="keyFun_UndoAddSelectionToNextFindMatch"
+        ; keyset.caps_lalt_a:="keyFunc_moveWordLeft(3)"
     if(!keyset.caps_lalt_b)
-        keyset.caps_lalt_b:="keyFunc_moveDown(30)"
+        keyset.caps_lalt_b:="jumpToPreviousOccuranceOfChar"
+        ;keyset.caps_lalt_b:="keyFun_UndoAddSelectionToNextFindMatch"
     if(!keyset.caps_lalt_c)
         keyset.caps_lalt_c:="keyFunc_copy_2"
     if(!keyset.caps_lalt_d)
@@ -170,9 +174,10 @@ keySchemeInit_capslox(){
     if(!keyset.caps_lalt_f)
         keyset.caps_lalt_f:="keyFunc_tabNext"
     if(!keyset.caps_lalt_g)
-        keyset.caps_lalt_g:="keyFunc_moveWordRight(3)"
+        keyset.caps_lalt_g:="keyFun_addSelectionToNextFindMatch"
+        ; keyset.caps_lalt_g:="keyFunc_moveWordRight(3)"
     if(!keyset.caps_lalt_h)
-        keyset.caps_lalt_h:="keyFunc_selectWordLeft(3)"
+        keyset.caps_lalt_h:="keyFun_find"
     if(!keyset.caps_lalt_i)
         keyset.caps_lalt_i:="keyFunc_moveLineUp"
     if(!keyset.caps_lalt_j)
@@ -251,11 +256,11 @@ keySchemeInit_capslox(){
     if(!keyset.caps_lalt_quote)
         keyset.caps_lalt_quote:="keyFunc_removeQuotes"
     if(!keyset.caps_lalt_enter)
-        keyset.caps_lalt_enter:="keyFunc_doNothing"
+        keyset.caps_lalt_enter:="keyFun_altTab"
     if(!keyset.caps_lalt_comma)
         keyset.caps_lalt_comma:="keyFunc_selectCurrentWord"
     if(!keyset.caps_lalt_dot)
-        keyset.caps_lalt_dot:="keyFunc_selectWordRight(3)"
+        keyset.caps_lalt_dot:="keyFunc_selectToPageEnd"
     if(!keyset.caps_lalt_slash)
         keyset.caps_lalt_slash:="keyFunc_deleteToPageEnd"
     if(!keyset.caps_lalt_space)

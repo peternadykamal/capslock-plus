@@ -221,7 +221,14 @@ keyFunc_enterWherever(){
 }
 
 keyFunc_esc(){
+    if(GetKeyState("CapsLock","T"))
+        SetCapsLockState, Off
     SendInput, {Esc}
+    Return
+}
+
+activateModificationMode(){
+    SetCapsLockState, % GetKeyState("CapsLock","T") ? "Off" : "On"
     Return
 }
 
@@ -329,7 +336,8 @@ keyFunc_switchClipboard(){
 keyFunc_pasteSystem(){
     global
 
-    ; ;禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，导致
+        ; ;禁止 OnClipboardChange 运行，防止 Clipboard:=sClipboardAll 重复执行，
+        ; 导致
     ; 偶尔会粘贴出空白if(!CLsets.global.allowClipboard)  ;禁用剪贴板功能{
     ;  CapsLock2:="" return }
     if (whichClipboardNow!=0)
@@ -545,6 +553,11 @@ keyFunc_tabPrve(){
         SendInput, ^{PgUp}
         return
     }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput, ^{PgUp}
+        Return
+    }
     SendInput, ^+{tab}
     return
 }
@@ -555,6 +568,11 @@ keyFunc_tabNext(){
     {
         SendInput, ^{PgDn}
         return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput, ^{PgDn}
+        Return
     }
     SendInput, ^{tab}
     return
@@ -680,6 +698,11 @@ keyFunc_commentLine(){
         SendInput, ^{/}
         return
     }
+    IfWinActive, ahk_exe Arduino IDE.exe
+    {
+        SendInput, ^{/}
+        return
+    }
     IfWinActive, ahk_exe Notion.exe
     {
         SendInput, ^{/}
@@ -701,6 +724,11 @@ keyFunc_undo(){
     SendInput, ^{z}
     Return
 }
+keyFun_find(){
+    SendInput, ^{f}
+    Return
+}
+
 ;selcting blocks in vscode
 keyFunc_rightSelctBlock(){
     IfWinActive, ahk_exe Code.exe
@@ -885,6 +913,14 @@ keyFun_addSelectionToNextFindMatch(){
     }
     return
 }
+keyFun_UndoAddSelectionToNextFindMatch(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        ;Cmd+u
+        SendInput, ^{u}
+    }
+    return
+}
 keyFunc_removeQuotes(){
     IfWinActive, ahk_exe Code.exe
     {
@@ -907,8 +943,8 @@ keyFun_jumpy(){
 keyFun_lalt_space(){
     IfWinActive, ahk_exe Code.exe
     {
-        ;ctrl + shift + \
-        SendInput, ^+{\}
+        ;ctrl + alt + \
+        SendInput, ^!{/}
         Return
     }
     ;shift + enter
@@ -947,18 +983,38 @@ keyFun_altTabMenu(){
     SendInput , ^!{tab}
     Return
 }
+; just to toggle between two windows
+keyFun_altTab(){
+    IfWinActive, ahk_exe Code.exe
+    {
+        SendInput , ^{tab}
+        Return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput , ^{tab}
+        Return
+    }
+    SendInput , !{tab}
+    Return
+}
 ; funtion to close the current focused window
 keyFun_closeWindow(){
     IfWinActive, ahk_exe Code.exe
     {
+        SendInput , ^{w}
+        Return
+    }
+    IfWinActive, ahk_exe firefox.exe
+    {
+        SendInput , ^{w}
         Return
     }
     WinGet, active_id, ID, A
     WinClose, ahk_id %active_id%
     Return
 }
-;this function is used to get the path of the current direcory opened by file
-;explorer 
+;this function is used to get the path of the current direcory opened by file explorer 
 GetActiveExplorerPath()
 {
     explorerHwnd := WinActive("ahk_class CabinetWClass")
@@ -971,6 +1027,72 @@ GetActiveExplorerPath()
                 return window.Document.Folder.Self.Path
             }
         }
+    }
+}
+
+; function to get the next occurance of the character in the current line
+GetCurrentLineAfterCursor() {
+    SendInput, +{End}
+    SendInput, ^c
+    SendInput, {Left}
+    Sleep 20
+    return RegExReplace(Clipboard, "[\^\$\.\*\+\?\(\)\[\]\{\}\\\/\|]", "`$0")
+}
+jumpToNextOccuranceOfChar()
+{
+    if(GetKeyState("CapsLock","T") = 0){
+        CapsLock = 0
+        Input, nextChar, L1 T0.5
+        CapsLock = 1
+    }
+    Else{
+        SetCapsLockState, Off
+        CapsLock = 0
+        Input, nextChar, L1 T0.5
+        SetCapsLockState, On
+    }
+    if (ErrorLevel = "Timeout")
+        return
+
+    line := GetCurrentLineAfterCursor()
+    nextChar := RegExReplace(nextChar, "[\^\$\.\*\+\?\(\)\[\]\{\}\\\/\|]", "\\\\\\$0")
+    if (RegExMatch(line, "(?i)(.*?)(" . nextChar . ")", match))
+    {
+        startPos := StrLen(match)
+        Send, {Right %startPos%}
+    }
+}
+
+;function to jump to previous occurance of the character in the current line
+GetCurrentLineBeforeCursor() {
+    SendInput, +{Home}
+    SendInput, ^c
+    SendInput, {Right}
+    Sleep 20
+    return RegExReplace(Clipboard, "[\^\$\.\*\+\?\(\)\[\]\{\}\\\/\|]", "`$0")
+}
+jumpToPreviousOccuranceOfChar()
+{
+    if(GetKeyState("CapsLock","T") = 0){
+        CapsLock = 0
+        Input, nextChar, L1 T0.75
+        CapsLock = 1
+    }
+    Else{
+        SetCapsLockState, Off
+        CapsLock = 0
+        Input, nextChar, L1 T0.75
+        SetCapsLockState, On
+    }
+    if (ErrorLevel = "Timeout")
+        return
+
+    line := GetCurrentLineBeforeCursor()
+    nextChar := RegExReplace(nextChar, "[\^\$\.\*\+\?\(\)\[\]\{\}\\\/\|]", "\\\\\\$0")
+    if (RegExMatch(line, "(?i)(?s)(.*)(?<=\K" . nextChar . ")(.*)$", match))
+    {
+        startPos := StrLen(match)
+        Send, {Left %startPos%}
     }
 }
 ;--------------------------------------------------------------------------
